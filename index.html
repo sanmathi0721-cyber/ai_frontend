@@ -5,168 +5,120 @@
   <title>AI PDF Summarizer</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+      margin: 0;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
+      background: linear-gradient(135deg, #4A00E0, #8E2DE2);
       color: #fff;
-      overflow-x: hidden;
-      position: relative;
+      transition: background 0.5s ease, color 0.5s ease;
     }
 
-    /* Animated gradient background shapes */
-    .bg-shape {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent 70%);
-      filter: blur(80px);
-      animation: float 10s infinite ease-in-out alternate;
-    }
-    .bg-shape:nth-child(1) { top: -50px; left: -50px; }
-    .bg-shape:nth-child(2) { bottom: -50px; right: -50px; animation-delay: 3s; }
-
-    @keyframes float {
-      0% { transform: translateY(0px) translateX(0px); }
-      100% { transform: translateY(40px) translateX(40px); }
+    body.light {
+      background: linear-gradient(135deg, #f8f8f8, #ddd);
+      color: #222;
     }
 
     header {
-      padding: 1.5rem;
       text-align: center;
       font-size: 2rem;
       font-weight: 600;
-      letter-spacing: 1px;
-      z-index: 2;
+      padding: 1rem;
+      position: relative;
     }
+
+    #themeToggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+    body.light #themeToggle { color: #222; background: rgba(0,0,0,0.1); }
 
     main {
       flex: 1;
       display: flex;
-      align-items: center;
       justify-content: center;
-      width: 100%;
-      z-index: 2;
+      align-items: center;
     }
 
     .card {
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(15px);
       padding: 2rem;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
       text-align: center;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    h2 {
-      margin-bottom: 1rem;
-      font-weight: 600;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
     input[type="file"] {
       margin: 1rem 0;
       padding: 0.8rem;
-      border: 2px dashed #fff;
-      border-radius: 12px;
       width: 100%;
+      border: 2px dashed white;
+      border-radius: 12px;
       background: rgba(255,255,255,0.1);
-      color: #fff;
+      color: inherit;
       cursor: pointer;
     }
 
     button {
-      margin-top: 1rem;
+      margin: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 8px;
       background: linear-gradient(135deg, #4A00E0, #8E2DE2);
       color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 10px;
+      font-weight: bold;
       cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+    body.light button { background: #444; }
+
+    #status { margin-top: 1rem; font-style: italic; }
+    #output { margin-top: 1.5rem; text-align: left; display: none; }
+    .summary {
+      padding: 1rem;
+      border-left: 4px solid white;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      min-height: 100px;
+      white-space: pre-line;
+      line-height: 1.6;
       font-size: 1rem;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    }
+    .actions { margin-top: 1rem; }
+    .stats { margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8; }
 
-    #status {
-      margin-top: 1rem;
-      font-style: italic;
-    }
-
-    /* Spinner */
     .spinner {
+      margin: 1rem auto;
       border: 4px solid rgba(255,255,255,0.3);
       border-top: 4px solid #fff;
       border-radius: 50%;
       width: 30px;
       height: 30px;
       animation: spin 1s linear infinite;
-      margin: 1rem auto;
       display: none;
     }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .summary {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.15);
-      border-left: 4px solid #fff;
-      border-radius: 12px;
-      white-space: pre-line;
-      text-align: left;
-      color: #fff;
-      font-size: 1rem;
-      line-height: 1.6;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    footer {
-      padding: 1rem;
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
-      z-index: 2;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      header { font-size: 1.5rem; }
-      .card { padding: 1.5rem; }
-    }
+    @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
   </style>
 </head>
 <body>
-  <!-- Fancy gradient shapes -->
-  <div class="bg-shape"></div>
-  <div class="bg-shape"></div>
-
-  <header>📄 AI PDF Summarizer</header>
+  <header>
+    📄 AI PDF Summarizer
+    <button id="themeToggle">🌙</button>
+  </header>
   <main>
     <div class="card">
       <h2>Upload & Summarize Instantly</h2>
@@ -174,16 +126,31 @@
       <button onclick="summarize()">✨ Summarize</button>
       <div id="status"></div>
       <div class="spinner" id="spinner"></div>
-      <div id="output" class="summary" style="display:none;"></div>
+      <div id="output">
+        <div class="summary" id="summaryText"></div>
+        <div class="stats" id="stats"></div>
+        <div class="actions">
+          <button onclick="copySummary()">📋 Copy</button>
+          <button onclick="downloadPDF()">📥 Download PDF</button>
+        </div>
+      </div>
     </div>
   </main>
-  <footer>🚀 Built with FastAPI + OpenAI | Final Year Project</footer>
+  <footer style="text-align:center; padding:1rem;">🚀 Final Year Project | Powered by FastAPI + OpenAI</footer>
 
   <script>
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.onclick = () => {
+      document.body.classList.toggle("light");
+      themeToggle.textContent = document.body.classList.contains("light") ? "🌙" : "☀️";
+    };
+
     async function summarize() {
       const fileInput = document.getElementById("pdfInput");
       const status = document.getElementById("status");
       const output = document.getElementById("output");
+      const summaryBox = document.getElementById("summaryText");
+      const stats = document.getElementById("stats");
       const spinner = document.getElementById("spinner");
 
       if (!fileInput.files.length) {
@@ -198,29 +165,56 @@
       status.innerText = "⏳ Processing your PDF...";
       spinner.style.display = "block";
       output.style.display = "none";
+      summaryBox.textContent = "";
 
       try {
-        // Change URL for Render deployment
         const response = await fetch("https://ai-backend-2-ruhe.onrender.com/summarize-pdf", {
           method: "POST",
           body: formData
         });
 
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.detail || "Error during summarization");
-        }
+        if (!response.ok) throw new Error("Error summarizing PDF");
 
         const data = await response.json();
         spinner.style.display = "none";
-        status.innerText = "✅ Summary generated:";
+        status.innerText = "✅ Summary Ready:";
         output.style.display = "block";
-        output.innerText = data.summary;
+
+        // Typing effect
+        let text = data.summary;
+        let i = 0;
+        function typeWriter() {
+          if (i < text.length) {
+            summaryBox.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 15);
+          }
+        }
+        typeWriter();
+
+        // Stats
+        let words = text.split(" ").length;
+        let readTime = Math.ceil(words / 200);
+        stats.innerText = `📊 Words: ${words} | ⏱️ Reading time: ~${readTime} min`;
       } catch (err) {
         spinner.style.display = "none";
         status.innerText = "❌ " + err.message;
       }
     }
+
+    function copySummary() {
+      const text = document.getElementById("summaryText").textContent;
+      navigator.clipboard.writeText(text);
+      alert("✅ Summary copied to clipboard!");
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text(document.getElementById("summaryText").textContent, 10, 10);
+      doc.save("summary.pdf");
+    }
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
