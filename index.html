@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI PDF Summarizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 1rem 2rem;
+      width: 100%;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+    button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background: #357ABD;
+    }
+    .summary {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f0f4f9;
+      border-radius: 8px;
+      white-space: pre-line;
+    }
+    footer {
+      padding: 1rem;
+      background: #eee;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>📄 AI PDF Summarizer</header>
+  <main>
+    <div class="card">
+      <h2>Upload your PDF</h2>
+      <input type="file" id="pdfInput" accept="application/pdf">
+      <button onclick="summarize()">Summarize</button>
+      <div id="status"></div>
+      <div id="output" class="summary" style="display:none;"></div>
+    </div>
+  </main>
+  <footer>Powered by FastAPI + OpenAI</footer>
+
+  <script>
+    async function summarize() {
+      const fileInput = document.getElementById("pdfInput");
+      const status = document.getElementById("status");
+      const output = document.getElementById("output");
+
+      if (!fileInput.files.length) {
+        alert("Please select a PDF file first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      status.innerText = "⏳ Uploading and summarizing...";
+      output.style.display = "none";
+
+      try {
+        // Change the URL if deployed on Render
+        const response = await fetch("http://localhost:8000/summarize-pdf", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || "Error during summarization");
+        }
+
+        const data = await response.json();
+        status.innerText = "✅ Summary generated:";
+        output.style.display = "block";
+        output.innerText = data.summary;
+      } catch (err) {
+        status.innerText = "❌ " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
