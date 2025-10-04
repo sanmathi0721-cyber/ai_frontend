@@ -15,11 +15,7 @@
       color: #fff;
       transition: background 0.5s ease, color 0.5s ease;
     }
-
-    body.light {
-      background: linear-gradient(135deg, #f8f8f8, #ddd);
-      color: #222;
-    }
+    body.light { background: #f9f9f9; color: #222; }
 
     header {
       text-align: center;
@@ -28,19 +24,15 @@
       padding: 1rem;
       position: relative;
     }
-
     #themeToggle {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
+      top: 1rem; right: 1rem;
       padding: 0.5rem 1rem;
       background: rgba(255,255,255,0.2);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
+      border: none; border-radius: 8px;
+      color: white; cursor: pointer;
     }
-    body.light #themeToggle { color: #222; background: rgba(0,0,0,0.1); }
+    body.light #themeToggle { background: rgba(0,0,0,0.1); color: #222; }
 
     main {
       flex: 1;
@@ -48,17 +40,16 @@
       justify-content: center;
       align-items: center;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(15px);
       padding: 2rem;
       border-radius: 20px;
       text-align: center;
-      width: 90%;
-      max-width: 700px;
+      width: 90%; max-width: 700px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
+    h2 { margin-bottom: 1rem; font-weight: 600; }
 
     input[type="file"] {
       margin: 1rem 0;
@@ -70,17 +61,13 @@
       color: inherit;
       cursor: pointer;
     }
-
     button {
       margin: 0.5rem;
       padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 8px;
+      border: none; border-radius: 8px;
       background: linear-gradient(135deg, #4A00E0, #8E2DE2);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
+      color: white; font-weight: bold;
+      cursor: pointer; transition: transform 0.2s;
     }
     button:hover { transform: scale(1.05); }
     body.light button { background: #444; }
@@ -91,13 +78,12 @@
       padding: 1rem;
       border-left: 4px solid white;
       border-radius: 12px;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
       min-height: 100px;
       white-space: pre-line;
       line-height: 1.6;
       font-size: 1rem;
     }
-
     .actions { margin-top: 1rem; }
     .stats { margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8; }
 
@@ -106,12 +92,13 @@
       border: 4px solid rgba(255,255,255,0.3);
       border-top: 4px solid #fff;
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 30px; height: 30px;
       animation: spin 1s linear infinite;
       display: none;
     }
-    @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+
+    footer { text-align:center; padding:1rem; font-size:0.9rem; }
   </style>
 </head>
 <body>
@@ -119,6 +106,7 @@
     📄 AI PDF Summarizer
     <button id="themeToggle">🌙</button>
   </header>
+
   <main>
     <div class="card">
       <h2>Upload & Summarize Instantly</h2>
@@ -136,15 +124,18 @@
       </div>
     </div>
   </main>
-  <footer style="text-align:center; padding:1rem;">🚀 Final Year Project | Powered by FastAPI + OpenAI</footer>
+
+  <footer>🚀 Final Year Project | Powered by FastAPI + OpenAI</footer>
 
   <script>
+    // Theme toggle
     const themeToggle = document.getElementById("themeToggle");
     themeToggle.onclick = () => {
       document.body.classList.toggle("light");
       themeToggle.textContent = document.body.classList.contains("light") ? "🌙" : "☀️";
     };
 
+    // Summarize
     async function summarize() {
       const fileInput = document.getElementById("pdfInput");
       const status = document.getElementById("status");
@@ -168,6 +159,7 @@
       summaryBox.textContent = "";
 
       try {
+        // ⚠️ Change to Render URL when deployed
         const response = await fetch("https://ai-backend-2-ruhe.onrender.com/summarize-pdf", {
           method: "POST",
           body: formData
@@ -196,64 +188,62 @@
         let words = text.split(" ").length;
         let readTime = Math.ceil(words / 200);
         stats.innerText = `📊 Words: ${words} | ⏱️ Reading time: ~${readTime} min`;
+
       } catch (err) {
         spinner.style.display = "none";
         status.innerText = "❌ " + err.message;
       }
     }
 
+    // Copy summary
     function copySummary() {
       const text = document.getElementById("summaryText").textContent;
       navigator.clipboard.writeText(text);
       alert("✅ Summary copied to clipboard!");
     }
 
-   function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+    // Download summary as PDF
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-  // ---- PDF Metadata ----
-  doc.setProperties({
-    title: "AI PDF Summary",
-    subject: "Summary generated from uploaded PDF",
-    author: "AI PDF Summarizer",
-    keywords: "AI, PDF, Summary, OpenAI, FastAPI",
-    creator: "AI PDF Summarizer App"
-  });
+      // Metadata
+      doc.setProperties({
+        title: "AI PDF Summary",
+        subject: "Summary generated from uploaded PDF",
+        author: "AI PDF Summarizer",
+        creator: "AI PDF Summarizer App"
+      });
 
-  // ---- Title ----
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("📄 AI PDF Summary", 10, 20);
+      // Title
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("📄 AI PDF Summary", 10, 20);
 
-  // ---- Summary Content ----
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
+      // Content
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
 
-  const summary = document.getElementById("summaryText").textContent;
-  const lines = doc.splitTextToSize(summary, 180);
+      const summary = document.getElementById("summaryText").textContent;
+      const lines = doc.splitTextToSize(summary, 180);
 
-  let y = 35; // starting Y position
-  lines.forEach(line => {
-    if (y > 280) {       // If page is full, add new page
-      doc.addPage();
-      y = 20;
-    }
-    doc.text(line, 10, y);
-    y += 7; // line spacing
-  });
+      let y = 35;
+      lines.forEach(line => {
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(line, 10, y);
+        y += 7;
+      });
 
-  // ---- Footer ----
-  const today = new Date().toLocaleString();
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.text(`Generated by AI PDF Summarizer | ${today}`, 10, 290);
+      // Footer
+      const today = new Date().toLocaleString();
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated by AI PDF Summarizer | ${today}`, 10, 290);
 
-  // ---- Save File ----
-  doc.save("summary.pdf");
-
-}
-
+      doc.save("summary.pdf");
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
