@@ -1,218 +1,397 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI PDF Summarizer ✨</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #3b82f6, #9333ea, #f59e0b);
-      background-size: 400% 400%;
-      animation: gradientShift 12s ease infinite;
-      color: #fff;
-      text-align: center;
-      padding: 40px;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    h1 {
-      font-size: 2.4em;
-      margin-bottom: 10px;
-      text-shadow: 0 0 12px rgba(255,255,255,0.5);
-    }
-    .card {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      margin-top: 20px;
-      transition: 0.3s;
-    }
-    .card:hover { transform: scale(1.01); }
-    button {
-      background: #fff;
-      color: #1e3a8a;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin: 5px;
-    }
-    button:hover {
-      background: #1e3a8a;
-      color: #fff;
-    }
-    input[type="file"] {
-      margin-top: 10px;
-      background: #fff;
-      color: #111;
-      border-radius: 8px;
-      padding: 6px;
-    }
-    .result {
-      white-space: pre-wrap;
-      margin-top: 15px;
-      text-align: left;
-      background: rgba(255,255,255,0.15);
-      padding: 10px;
-      border-radius: 12px;
-      min-height: 120px;
-      line-height: 1.6;
-    }
-    .history {
-      text-align: left;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-    .progress-bar {
-      width: 100%;
-      background: rgba(255,255,255,0.2);
-      border-radius: 10px;
-      margin-top: 10px;
-      overflow: hidden;
-      display: none;
-    }
-    .progress-bar div {
-      height: 8px;
-      width: 0%;
-      background: #fff;
-      transition: width 0.3s;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>✨ AI PDF Summarizer — Presentation Mode</title>
+
+<!-- ====== Styles (all in one) ====== -->
+<style>
+  :root{
+    --accent1:#7c3aed; --accent2:#06b6d4; --bg-dark:#051025;
+    --card: rgba(255,255,255,0.06); --glass-shadow: 0 14px 40px rgba(2,6,23,0.25);
+    --muted: #9aa7c7;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;color:#eaf2ff}
+  /* animated radiant background */
+  body{
+    background: linear-gradient(120deg, rgba(124,58,237,0.12), rgba(6,182,212,0.06));
+    --gpos: 0%;
+    animation: bgShift 18s linear infinite;
+    overflow-x:hidden;
+  }
+  @keyframes bgShift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  /* container */
+  .wrap{max-width:1100px;margin:36px auto;padding:22px;}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{margin:0;font-size:22px;color:var(--accent1);text-shadow:0 4px 24px rgba(124,58,237,0.12)}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+  /* cards / glass */
+  .card{background:var(--card);backdrop-filter: blur(8px);border-radius:14px;padding:16px;box-shadow:var(--glass-shadow);margin-top:16px;transition:transform .18s}
+  .card:hover{transform:translateY(-4px)}
+
+  /* upload area */
+  .upload{border:2px dashed rgba(255,255,255,0.06);padding:18px;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s}
+  .upload.drag{border-color:rgba(124,58,237,0.6);transform:scale(1.01)}
+  input[type=file]{display:none}
+
+  /* controls */
+  .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .controls select, .controls input[type=range]{padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:inherit}
+  .btn{
+    background: linear-gradient(90deg,var(--accent1),#5b21b6); color:white; border:none;padding:10px 16px;border-radius:10px;cursor:pointer;
+    box-shadow:0 10px 30px rgba(124,58,237,0.12);
+  }
+  .btn.pulse { animation: pulse 1s infinite; }
+  @keyframes pulse{0%{box-shadow:0 10px 30px rgba(124,58,237,0.08)}50%{box-shadow:0 18px 44px rgba(124,58,237,0.22)}100%{box-shadow:0 10px 30px rgba(124,58,237,0.08)} }
+
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+
+  /* result area */
+  .result{
+    margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    padding:14px;border-radius:10px;min-height:140px;text-align:left;white-space:pre-wrap;font-size:15px;line-height:1.6;
+    border-left:4px solid rgba(124,58,237,0.18)
+  }
+  .meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .chip{background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;font-size:13px;color:var(--muted)}
+
+  /* progress */
+  .progress{height:10px;background:rgba(255,255,255,0.03);border-radius:10px;margin-top:10px;overflow:hidden;display:none}
+  .progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .25s}
+
+  /* history panel (sliding) */
+  .history-wrap{position:fixed;right:20px;top:90px;width:340px;max-height:70vh;transform:translateX(420px);transition:transform .45s;z-index:1200}
+  .history-wrap.open{transform:translateX(0)}
+  .history-card{padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 18px 40px rgba(2,6,23,0.25);height:100%;overflow:auto}
+  .history-item{padding:10px;border-bottom:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
+  .history-item strong{display:block;color:#fff}
+  .history-controls{display:flex;gap:8px;margin-top:8px;justify-content:flex-end}
+
+  /* orb */
+  .orb{position:fixed;right:40px;bottom:80px;width:84px;height:84px;border-radius:50%;z-index:1500;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transform:scale(.8);transition:all .35s}
+  .orb.show{opacity:1;transform:scale(1)}
+  .orb-core{width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #8b5cf6,#7c3aed);box-shadow:0 0 50px #7c3aed,0 0 120px rgba(124,58,237,0.22);animation:floaty 4s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .orb-speech{position:absolute;bottom:110px;right:0;padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,#ffffffee,#f7fbff);color:#071032;box-shadow:0 12px 40px rgba(7,12,40,0.08);opacity:0;transform:translateY(8px);transition:all .25s}
+  .orb-speech.show{opacity:1;transform:translateY(0)}
+
+  /* responsive */
+  @media(max-width:900px){ .history-wrap{display:none} .wrap{padding:12px} }
+</style>
 </head>
 <body>
-  <h1>📄 AI PDF Summarizer</h1>
-  <p>Upload your PDF & let AI create a summary in seconds</p>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>✨ AI PDF Summarizer — Presentation Mode</h1>
+        <div class="sub">All demo features: animations, TTS, shorten/expand, history, export — backend unchanged.</div>
+      </div>
+      <div>
+        <button id="toggleHistory" class="ghost">📜 History</button>
+      </div>
+    </header>
 
-  <div class="card">
-    <input type="file" id="pdfFile" accept="application/pdf" />
-    <button id="summarizeBtn">⚡ Summarize</button>
-    <div class="progress-bar" id="progressBar"><div></div></div>
+    <!-- UPLOAD CARD -->
+    <div class="card">
+      <div id="upload" class="upload">
+        <div style="font-weight:600">🔽 Drag & drop a PDF here or click to choose</div>
+        <div class="sub" style="margin-top:6px">Recommended &lt; 16 MB</div>
+        <input id="file" type="file" accept="application/pdf" />
+      </div>
+
+      <div class="controls">
+        <label class="small">Preview sentences</label>
+        <input id="lenRange" type="range" min="1" max="8" value="3" />
+        <div class="small">•</div>
+        <button id="summBtn" class="btn">⚡ Summarize</button>
+        <div class="small" style="margin-left:8px;color:var(--muted)">• extra tools •</div>
+        <button id="shortBtn" class="ghost">✂️ Shorten</button>
+        <button id="expandBtn" class="ghost">🔍 Expand</button>
+        <button id="kwBtn" class="ghost">🔎 Keywords</button>
+      </div>
+
+      <div id="warn" class="small" style="color:#ffb4b4;margin-top:8px;display:none"></div>
+      <div id="progress" class="progress"><div></div></div>
+    </div>
+
+    <!-- RESULT CARD -->
+    <div class="card" style="margin-top:18px">
+      <h3 style="margin:0">🧠 Summary</h3>
+      <div id="result" class="result">No summary yet.</div>
+
+      <div class="meta" id="meta" style="display:none">
+        <div class="chip">Words: <span id="wc">0</span></div>
+        <div class="chip">Sentences: <span id="sc">0</span></div>
+        <div class="chip">Read: <span id="rt">0</span> min</div>
+        <div class="chip">Keywords: <span id="kws">—</span></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button id="speakBtn" class="ghost">🗣 Play</button>
+        <button id="stopBtn" class="ghost">🛑 Stop</button>
+        <button id="copyBtn" class="ghost">📋 Copy</button>
+        <button id="downTxt" class="ghost">⬇️ TXT</button>
+        <button id="downPdf" class="ghost">⬇️ PDF</button>
+      </div>
+    </div>
+
+    <footer style="margin-top:12px;color:var(--muted);font-size:13px">Tip: Use History to re-open previous summaries. Presentation mode enabled.</footer>
   </div>
 
-  <div class="card">
-    <h2>🧠 Summary</h2>
-    <div id="result" class="result"></div>
-    <div>
-      <button id="shortBtn">✂️ Shorten</button>
-      <button id="expandBtn">🔍 Expand</button>
-      <button id="voiceBtn">🗣 Speak</button>
-      <button id="copyBtn">📋 Copy</button>
-      <button id="downloadBtn">💾 Download</button>
+  <!-- sliding history -->
+  <div class="history-wrap" id="historyWrap" aria-hidden="true">
+    <div class="history-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>📜 Summary History</strong>
+        <div>
+          <button id="exportHist" class="ghost small">Export</button>
+          <button id="importHist" class="ghost small">Import</button>
+          <button id="clearHist" class="ghost small">Clear</button>
+        </div>
+      </div>
+      <div id="historyList" style="margin-top:12px"></div>
+      <div class="history-controls" style="margin-top:12px">
+        <small class="small" style="color:var(--muted)">Click View / Download</small>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>📜 History</h2>
-    <div id="historyList" class="history"></div>
+  <!-- orb -->
+  <div class="orb" id="orb" aria-hidden="true">
+    <div class="orb-core"></div>
+    <div class="orb-speech" id="orbSpeech"></div>
   </div>
 
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- ====== Script: all feature wiring ====== -->
   <script>
-    const BACKEND_URL = "https://ai-backend-3-aepo.onrender.com";
-    const fileInput = document.getElementById("pdfFile");
-    const resultDiv = document.getElementById("result");
-    const progressBar = document.getElementById("progressBar");
-    const progress = progressBar.querySelector("div");
-    const synth = window.speechSynthesis;
-    let currentSummary = "";
+  // =========== CONFIG ===========
+  const BACKEND_URL = "https://ai-backend-3-aepo.onrender.com"; // <<-- your backend (no trailing slash)
 
-    document.getElementById("summarizeBtn").addEventListener("click", async () => {
-      const file = fileInput.files[0];
-      if (!file) return alert("Please select a PDF file first!");
-      const formData = new FormData();
-      formData.append("file", file);
+  // =========== STATE & REFS ===========
+  let lastFull = ""; // store the last good summary (for shorten/expand)
+  let history = JSON.parse(localStorage.getItem('aiSummHistory')||'[]');
 
-      resultDiv.innerText = "";
-      progressBar.style.display = "block";
-      progress.style.width = "0%";
-      let width = 0;
-      const interval = setInterval(() => {
-        if (width < 90) {
-          width += 10;
-          progress.style.width = width + "%";
-        }
-      }, 300);
+  const upload = document.getElementById('upload');
+  const fileInput = document.getElementById('file');
+  const summBtn = document.getElementById('summBtn');
+  const progress = document.getElementById('progress');
+  const progressInner = progress.querySelector('div');
+  const warn = document.getElementById('warn');
+  const resultEl = document.getElementById('result');
+  const meta = document.getElementById('meta');
+  const wc = document.getElementById('wc'), sc = document.getElementById('sc'), rt = document.getElementById('rt'), kws = document.getElementById('kws');
+  const lenRange = document.getElementById('lenRange');
+  const shortBtn = document.getElementById('shortBtn'), expandBtn = document.getElementById('expandBtn'), kwBtn = document.getElementById('kwBtn');
+  const speakBtn = document.getElementById('speakBtn'), stopBtn = document.getElementById('stopBtn');
+  const copyBtn = document.getElementById('copyBtn'), downTxt = document.getElementById('downTxt'), downPdf = document.getElementById('downPdf');
+  const toggleHistory = document.getElementById('toggleHistory'), historyWrap = document.getElementById('historyWrap'), historyList = document.getElementById('historyList');
+  const exportHist = document.getElementById('exportHist'), importHist = document.getElementById('importHist'), clearHist = document.getElementById('clearHist');
+  const orb = document.getElementById('orb'), orbSpeech = document.getElementById('orbSpeech');
 
-      try {
-        const res = await fetch(`${BACKEND_URL}/summarize`, { method: "POST", body: formData });
-        const data = await res.json();
-        clearInterval(interval);
-        progress.style.width = "100%";
-        setTimeout(() => (progressBar.style.display = "none"), 500);
-        currentSummary = data.summary || "No summary generated.";
-        resultDiv.innerText = currentSummary;
-        saveHistory(file.name, currentSummary);
-      } catch (err) {
-        clearInterval(interval);
-        alert("Error: " + err.message);
-        progressBar.style.display = "none";
+  // TTS
+  const synth = window.speechSynthesis;
+  let tts = null;
+
+  // =========== UTIL ===========
+  function showWarn(msg){ warn.style.display = msg ? 'block':'none'; warn.textContent = msg || ''; }
+  function setProgress(p){ progress.style.display = 'block'; progressInner.style.width = p + '%'; if(p>=100) setTimeout(()=>progress.style.display='none', 400); }
+  function showOrb(msg){ orb.classList.add('show'); if(msg) orbSpeak(msg); }
+  function hideOrb(){ orb.classList.remove('show'); orbSpeech.classList.remove('show'); }
+  function orbSpeak(txt, speed=24){ orbSpeech.textContent=''; orbSpeech.classList.add('show'); let i=0; const iv=setInterval(()=>{ orbSpeech.textContent += txt[i]||''; i++; if(i>txt.length) clearInterval(iv); }, speed); }
+  function splitSentences(s){ return s.split(/(?<=[.?!])\s+/).filter(Boolean); }
+  function topKeywords(text, n=6){ const words=(text.toLowerCase().match(/\b[a-z]{3,}\b/g)||[]).filter(w=>w.length>2); const stop=new Set(['this','that','their','there','with','about','have','which','from','will','would','could','your','also']); const freq={}; words.forEach(w=>{ if(!stop.has(w)) freq[w]=(freq[w]||0)+1 }); return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0]); }
+  function updateMeta(summary){ if(!summary){ meta.style.display='none'; return; } const words = summary.trim().split(/\s+/).filter(Boolean).length; const sents = splitSentences(summary).length; wc.textContent = words; sc.textContent = sents; rt.textContent = Math.max(1, Math.round(words/200)); const kw = topKeywords(summary,6).join(', ') || '—'; kws.textContent = kw; meta.style.display = 'flex'; }
+
+  // typing effect (word-wise)
+  function typeWrite(el, text, wpm=300){
+    el.textContent=''; const words = text.split(/\s+/); let i=0;
+    const ms = Math.max(6, Math.round(60000/wpm)); const iv = setInterval(()=>{ el.textContent += (i? ' ':'') + words[i] || ''; i++; if(i>=words.length) clearInterval(iv); }, ms);
+  }
+
+  // =========== HISTORY ===========
+  function saveHistory(){ localStorage.setItem('aiSummHistory', JSON.stringify(history)); }
+  function renderHistory(){
+    historyList.innerHTML = '';
+    if(history.length===0){ historyList.innerHTML = '<div class="small" style="color:var(--muted)">No history yet</div>'; return; }
+    history.forEach((h, i) => {
+      const div = document.createElement('div'); div.className='history-item';
+      div.innerHTML = `<div><strong>${h.name}</strong><div class="small" style="color:var(--muted)">${h.time}</div></div>
+                       <div style="display:flex;gap:8px">
+                         <button class="ghost small" data-i="${i}" data-act="view">View</button>
+                         <button class="ghost small" data-i="${i}" data-act="dl">DL</button>
+                       </div>`;
+      historyList.appendChild(div);
+    });
+    // attach delegation
+    historyList.querySelectorAll('button').forEach(b => b.onclick = () => {
+      const i = Number(b.dataset.i);
+      const a = b.dataset.act;
+      if(a==='view'){ lastFull = history[i].summary; displaySummary(lastFull); updateMeta(lastFull); }
+      if(a==='dl'){ downloadPDF(history[i].name, history[i].summary); }
+    });
+  }
+  function addHistory(name, summary){
+    history.unshift({id:Date.now(), name, summary, time: new Date().toLocaleString() });
+    if(history.length>60) history.pop();
+    saveHistory(); renderHistory();
+  }
+
+  // =========== CORE: communicate with backend ===========
+  async function summarizeFile(file){
+    showWarn('');
+    if(!file) return showWarn('Please choose a PDF');
+    if(file.size > 24 * 1024 * 1024) showWarn('Large file — may be slow (recommended <24MB)');
+
+    showOrb(); orbSpeak("Analyzing your document...");
+    setProgress(8);
+    // fake progress
+    let p=8; const tween = setInterval(()=>{ p = Math.min(92, p + Math.random()*8 + 6); setProgress(p); }, 550);
+
+    try{
+      const fd = new FormData(); fd.append('file', file);
+      const res = await fetch(BACKEND_URL + '/summarize', { method:'POST', body: fd });
+      clearInterval(tween); setProgress(92);
+      if(!res.ok){
+        const txt = await res.text();
+        hideOrb(); setProgress(0);
+        return showWarn('Server error: ' + res.status + ' — ' + (txt || res.statusText));
       }
-    });
+      const j = await res.json();
+      hideOrb(); setProgress(100);
+      if(j.error) return showWarn('Backend: ' + j.error);
 
-    function saveHistory(name, text) {
-      const history = JSON.parse(localStorage.getItem("pdfHistory")) || [];
-      history.unshift({ name, text, time: new Date().toLocaleString() });
-      localStorage.setItem("pdfHistory", JSON.stringify(history));
-      renderHistory();
+      const summary = (j.summary || j.result || '').trim();
+      if(!summary){ displaySummary('No summary generated.'); updateMeta(''); addHistory(file.name,''); return; }
+      lastFull = summary;
+      addHistory(file.name, summary);
+      typeWrite(resultEl, summary, 240); updateMeta(summary);
+      orbSpeak("Here's your summary"); setTimeout(()=>orbSpeech.classList.remove('show'), 1900);
+    }catch(err){
+      clearInterval(tween); hideOrb(); setProgress(0); showWarn('Request failed: ' + (err.message || err));
     }
+  }
 
-    function renderHistory() {
-      const history = JSON.parse(localStorage.getItem("pdfHistory")) || [];
-      const div = document.getElementById("historyList");
-      div.innerHTML = "";
-      history.forEach(h => {
-        const item = document.createElement("div");
-        item.innerHTML = `<strong>${h.name}</strong> - <small>${h.time}</small>
-        <button onclick="loadSummary('${h.text.replace(/'/g, "\\'")}')">View</button>`;
-        div.appendChild(item);
-      });
-    }
+  function displaySummary(txt){ resultEl.textContent = txt; updateMeta(txt); }
 
-    function loadSummary(text) {
-      resultDiv.innerText = text;
-      currentSummary = text;
-    }
-    renderHistory();
-
-    document.getElementById("shortBtn").addEventListener("click", () => {
-      if (!currentSummary) return;
-      const short = currentSummary.split(".").slice(0, 3).join(".") + ".";
-      resultDiv.innerText = short;
+  // =========== Shorten / Expand / Keywords ===========
+  document.getElementById('shortBtn').onclick = () => {
+    if(!lastFull) return showWarn('No summary to shorten'); showWarn('');
+    const n = parseInt(lenRange.value || 3);
+    const s = splitSentences(lastFull).slice(0, n).join(' ');
+    displaySummary(s); updateMeta(s);
+  };
+  document.getElementById('expandBtn').onclick = () => {
+    if(!lastFull) return showWarn('No summary to expand'); showWarn('');
+    const n = Math.max(6, parseInt(lenRange.value || 3) * 2);
+    const s = splitSentences(lastFull).slice(0, n).join(' ');
+    displaySummary(s); updateMeta(s);
+  };
+  document.getElementById('kwBtn').onclick = () => {
+    const text = resultEl.innerText || lastFull || '';
+    if(!text) return showWarn('No summary to analyze'); showWarn('');
+    const keys = topKeywords(text, 8);
+    if(keys.length===0) return showWarn('No keywords found');
+    // highlight in element (safe replace)
+    let html = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    keys.forEach(k => {
+      const re = new RegExp('\\b(' + k.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&') + ')\\b','gi');
+      html = html.replace(re, '<mark style="background:linear-gradient(90deg,#fff9c4,#ffd54f);padding:2px;border-radius:4px">$1</mark>');
     });
+    resultEl.innerHTML = html;
+    updateMeta(text);
+  };
 
-    document.getElementById("expandBtn").addEventListener("click", () => {
-      if (!currentSummary) return;
-      resultDiv.innerText = currentSummary + "\n\nIn detail: " + currentSummary;
-    });
+  // =========== TTS ===========
+  speakBtn.onclick = () => {
+    const text = resultEl.innerText || lastFull || '';
+    if(!text) return showWarn('No text to read');
+    showWarn('');
+    if(tts) { synth.cancel(); tts = null; }
+    tts = new SpeechSynthesisUtterance(text);
+    tts.rate = 1; tts.pitch = 1;
+    tts.onend = ()=>{ tts = null; };
+    synth.speak(tts);
+  };
+  stopBtn.onclick = ()=>{ if(tts) synth.cancel(); tts = null; };
 
-    document.getElementById("voiceBtn").addEventListener("click", () => {
-      if (!currentSummary) return;
-      synth.cancel();
-      const utter = new SpeechSynthesisUtterance(currentSummary);
-      utter.rate = 1;
-      utter.pitch = 1;
-      synth.speak(utter);
-    });
+  // =========== Copy / Download ===========
+  copyBtn.onclick = ()=>{ const t = resultEl.innerText || ''; if(!t) return showWarn('No summary to copy'); navigator.clipboard.writeText(t); flashBtn(copyBtn); };
+  downTxt.onclick = ()=>{ const t = resultEl.innerText || lastFull || ''; if(!t) return showWarn('No summary to download'); const blob = new Blob([t],{type:'text/plain'}); const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(history[0]?.name || 'summary') + '.txt'; a.click(); flashBtn(downTxt); };
+  downPdf.onclick = ()=>{ const t = resultEl.innerText || lastFull || ''; if(!t) return showWarn('No summary to download'); downloadPDF((history[0]?.name||'summary'), t); flashBtn(downPdf); };
 
-    document.getElementById("copyBtn").addEventListener("click", () => {
-      navigator.clipboard.writeText(resultDiv.innerText);
-      alert("Copied!");
-    });
+  // small visual feedback
+  function flashBtn(el){ el.style.transform='translateY(-3px)'; setTimeout(()=>el.style.transform='',160); }
 
-    document.getElementById("downloadBtn").addEventListener("click", () => {
-      const blob = new Blob([resultDiv.innerText], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "summary.txt";
-      link.click();
-    });
+  // =========== PDF export (jsPDF) ===========
+  function downloadPDF(name, text){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt', format:'a4'});
+    doc.setFontSize(14); doc.text(`Summary — ${name}`, 40, 60);
+    doc.setFontSize(10); doc.text(`Generated: ${new Date().toLocaleString()} — AI PDF Summarizer`, 40, 80);
+    const split = doc.splitTextToSize(text, 520);
+    doc.text(split, 40, 110);
+    doc.save((name || 'summary') + '.pdf');
+  }
+
+  // =========== History controls ===========
+  document.getElementById('toggleHistory').onclick = () => {
+    historyWrap.classList.toggle('open');
+  };
+  exportHist.onclick = () => {
+    const blob = new Blob([JSON.stringify(history, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'summary-history.json'; a.click();
+  };
+  importHist.onclick = () => {
+    const f = document.createElement('input'); f.type='file'; f.accept='application/json';
+    f.onchange = ()=>{ const file = f.files[0]; if(!file) return; const r = new FileReader(); r.onload = (e)=>{ try{ const arr = JSON.parse(e.target.result); if(Array.isArray(arr)){ history = arr.concat(history); saveHistory(); renderHistory(); alert('Imported'); } }catch(err){ alert('Invalid JSON'); } }; r.readAsText(file); };
+    f.click();
+  };
+  clearHist.onclick = ()=>{ if(confirm('Clear history?')){ history = []; saveHistory(); renderHistory(); } };
+
+  // =========== Upload drag/drop wiring ===========
+  upload.addEventListener('click', ()=>fileInput.click());
+  upload.addEventListener('dragenter', (e)=>{ e.preventDefault(); upload.classList.add('drag'); });
+  upload.addEventListener('dragover', (e)=>e.preventDefault());
+  upload.addEventListener('dragleave', ()=>upload.classList.remove('drag'));
+  upload.addEventListener('drop', (e)=>{ e.preventDefault(); upload.classList.remove('drag'); const f = e.dataTransfer.files[0]; if(f && f.type === 'application/pdf') fileInput.files = e.dataTransfer.files; else showWarn('Please drop a PDF file'); });
+
+  // when user selects file
+  fileInput.onchange = ()=>{ showWarn(''); };
+
+  // Summarize button
+  summBtn.onclick = ()=>{ const f = fileInput.files[0]; if(!f) return showWarn('Pick a PDF first'); showWarn(''); // animate button
+    summBtn.classList.add('pulse'); setTimeout(()=>summBtn.classList.remove('pulse'), 2000); summarizeFile(f);
+  };
+
+  // =========== initial render ===========
+  renderHistory(); updateMeta(''); hideOrb();
+  // greet once on load
+  setTimeout(()=>{ showOrb(); orbSpeak("Hello — I'm ready to summarize your PDF!"); setTimeout(()=>hideOrb(),3000); }, 700);
+
+  // ping backend (no crash)
+  (async()=>{ try{ await fetch(BACKEND_URL + '/'); }catch(e){} })();
+  // helper: ensure jsPDF lib loaded
+  if(!window.jspdf) console.warn('jsPDF not loaded — PDF export may not work.');
+
+  // render history UI
+  function renderHistory(){ historyList.innerHTML=''; if(history.length===0){ historyList.innerHTML='<div class="small" style="color:var(--muted)">No history</div>'; return; } history.forEach((h,i)=>{ const el=document.createElement('div'); el.className='history-item'; el.innerHTML = `<div><strong>${h.name}</strong><div class="small" style="color:var(--muted)">${h.time}</div></div><div style="display:flex;gap:8px"><button class="ghost small" data-i="${i}" data-act="v">View</button><button class="ghost small" data-i="${i}" data-act="d">DL</button></div>`; historyList.appendChild(el); }); // attach
+    historyList.querySelectorAll('button').forEach(b=>b.onclick = ()=>{ const i = Number(b.dataset.i); const a = b.dataset.act; if(a==='v'){ lastFull = history[i].summary; displaySummary(lastFull); updateMeta(lastFull); } if(a==='d'){ downloadPDF(history[i].name, history[i].summary); } }); }
+
+  // ensure local save on unload
+  window.addEventListener('beforeunload', ()=> saveHistory());
+
   </script>
 </body>
 </html>
