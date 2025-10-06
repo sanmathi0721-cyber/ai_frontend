@@ -1,268 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI PDF Summarizer ✨</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>✨ AI PDF Summarizer Pro</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
-  color: #e2e8f0;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  overflow-x: hidden;
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(120deg,#0f172a,#1e293b,#3b0764);
+  background-size:300% 300%;
+  animation:bgShift 10s ease infinite;
+  color:#e2e8f0;
+  overflow-x:hidden;
 }
+@keyframes bgShift {0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
 
 h1 {
-  color: #38bdf8;
-  text-shadow: 0 0 10px #06b6d4;
-  margin-top: 30px;
-  font-size: 2rem;
-  letter-spacing: 1px;
+  text-align:center;
+  margin-top:30px;
+  font-size:2rem;
+  background:linear-gradient(90deg,#06b6d4,#a855f7);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 15px #06b6d4;
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(56,189,248,0.2);
-  max-width: 850px;
-  width: 90%;
-  padding: 25px;
-  margin: 30px auto;
+  max-width:900px;
+  margin:30px auto;
+  padding:25px;
+  background:rgba(255,255,255,0.06);
+  border-radius:20px;
+  box-shadow:0 0 25px rgba(168,85,247,0.2);
 }
 
 .upload-box {
-  border: 2px dashed rgba(255,255,255,0.15);
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.3s;
+  border:2px dashed rgba(255,255,255,0.2);
+  border-radius:12px;
+  padding:40px;
+  text-align:center;
+  transition:.3s;
 }
-
-.upload-box:hover {
-  background: rgba(255,255,255,0.07);
-  transform: scale(1.02);
-}
-
-input[type=file] { display: none; }
+.upload-box:hover {background:rgba(255,255,255,0.07);transform:scale(1.02);}
+input[type=file]{display:none;}
 
 button {
-  background: linear-gradient(90deg,#7c3aed,#06b6d4);
-  border: none;
-  color: white;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: 0.3s;
+  background:linear-gradient(90deg,#7c3aed,#06b6d4);
+  border:none;
+  color:white;
+  font-weight:600;
+  border-radius:8px;
+  padding:10px 18px;
+  margin:8px;
+  cursor:pointer;
+  transition:.3s;
 }
-button:hover { transform: scale(1.05); }
-
-.controls {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
+button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
 
 .result {
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
-  padding: 15px;
-  min-height: 150px;
-  white-space: pre-wrap;
-  margin-top: 15px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #f1f5f9;
-  box-shadow: inset 0 0 20px rgba(56,189,248,0.15);
+  margin-top:20px;
+  padding:15px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  white-space:pre-wrap;
+  line-height:1.6;
+  font-size:15px;
+  color:#f1f5f9;
+  box-shadow:inset 0 0 15px rgba(56,189,248,0.15);
+  min-height:150px;
 }
 
 .orb {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #06b6d4, #7c3aed);
-  margin: 25px auto;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 30px #06b6d4;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  margin:25px auto;
+  background:radial-gradient(circle at 30% 30%,#06b6d4,#7c3aed);
+  animation:float 3s ease-in-out infinite;
+  box-shadow:0 0 25px #06b6d4;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-weight:700;font-size:18px;
 }
+@keyframes float {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 25px #06b6d4; }
-  50% { transform: scale(1.1); box-shadow: 0 0 40px #7c3aed; }
-}
+#status {text-align:center;margin-top:10px;color:#38bdf8;}
 
 #history {
-  margin-top: 25px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 15px;
+  margin-top:25px;
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding-top:10px;
 }
 
 .history-item {
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: #cbd5e1;
+  background:rgba(255,255,255,0.07);
+  margin-top:8px;
+  padding:10px;
+  border-radius:8px;
+  font-size:0.9rem;
+}
+
+.theme-toggle {
+  position:fixed;
+  top:20px;right:25px;
+  cursor:pointer;
+  font-size:22px;
+  color:#a5f3fc;
 }
 </style>
 </head>
-
 <body>
-  <h1>✨ AI PDF Summarizer</h1>
-  <div class="container">
-    <div class="orb" id="orb"></div>
-    <div class="upload-box" id="uploadBox">
-      📄 Click or drop a PDF here to summarize
-      <input type="file" id="fileInput" accept="application/pdf">
-    </div>
 
-    <div class="controls">
-      <button id="summBtn">Summarize</button>
-      <button id="shortBtn">Shorten</button>
-      <button id="expandBtn">Expand</button>
-      <button id="speakBtn">Speak</button>
-      <button id="copyBtn">Copy</button>
-      <button id="downloadBtn">Download</button>
-      <button id="clearBtn">Clear</button>
-    </div>
+<h1>✨ AI PDF Summarizer Pro</h1>
+<div class="theme-toggle" id="themeToggle">🌙</div>
 
-    <div id="status" style="text-align:center; margin-top:10px; color:#38bdf8;"></div>
-
-    <div id="result" class="result">No summary yet.</div>
-
-    <div id="history">
-      <h3>🕒 Summary History</h3>
-      <div id="historyList"></div>
-    </div>
+<div class="container">
+  <div class="orb" id="orb">AI</div>
+  <div class="upload-box" id="uploadBox">
+    📄 Click or drag a PDF here
+    <input type="file" id="fileInput" accept="application/pdf">
   </div>
 
+  <div style="text-align:center;margin-top:15px;">
+    <button id="summBtn">Summarize</button>
+    <button id="shortBtn">Shorten</button>
+    <button id="expandBtn">Expand</button>
+    <button id="rephraseBtn">Rephrase</button>
+    <button id="speakBtn">Speak</button>
+    <button id="copyBtn">Copy</button>
+    <button id="pdfBtn">Download PDF</button>
+    <button id="tipBtn">AI Tip</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <div id="status"></div>
+  <div id="result" class="result">🪄 Awaiting your magic PDF...</div>
+
+  <div id="history"><h3>📜 Summary History</h3><div id="historyList"></div></div>
+</div>
+
 <script>
-const BACKEND_URL = "https://ai-backend-4-78b9.onrender.com"; // 🔗 your backend URL
-const orb = document.getElementById('orb');
-const fileInput = document.getElementById('fileInput');
-const uploadBox = document.getElementById('uploadBox');
-const resultDiv = document.getElementById('result');
-const statusDiv = document.getElementById('status');
-const historyList = document.getElementById('historyList');
+const BACKEND_URL="https://ai-backend-4-78b9.onrender.com";
+let lastSummary="";
+const orb=document.getElementById("orb"),fileInput=document.getElementById("fileInput"),
+result=document.getElementById("result"),statusDiv=document.getElementById("status"),
+historyList=document.getElementById("historyList");
 
-let lastSummary = '';
+document.getElementById("uploadBox").onclick=()=>fileInput.click();
+document.getElementById("summBtn").onclick=()=>summarize();
+document.getElementById("shortBtn").onclick=()=>shorten();
+document.getElementById("expandBtn").onclick=()=>expand();
+document.getElementById("rephraseBtn").onclick=()=>rephrase();
+document.getElementById("speakBtn").onclick=()=>speak();
+document.getElementById("copyBtn").onclick=()=>copyText();
+document.getElementById("pdfBtn").onclick=()=>downloadPDF();
+document.getElementById("clearBtn").onclick=()=>clearAll();
+document.getElementById("tipBtn").onclick=()=>showTip();
+document.getElementById("themeToggle").onclick=()=>toggleTheme();
 
-uploadBox.onclick = () => fileInput.click();
-uploadBox.ondragover = e => { e.preventDefault(); uploadBox.style.background='rgba(255,255,255,0.1)'; };
-uploadBox.ondragleave = () => uploadBox.style.background='';
-uploadBox.ondrop = e => {
-  e.preventDefault(); uploadBox.style.background='';
-  const f = e.dataTransfer.files[0];
-  if(f && f.type==='application/pdf') fileInput.files = e.dataTransfer.files;
-  else alert('Please drop a PDF file.');
-};
-
-function animateText(element, text) {
-  element.textContent = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    element.textContent += text[i];
-    i++;
-    if (i >= text.length) clearInterval(interval);
-  }, 15);
+async function summarize(){
+  const f=fileInput.files[0];
+  if(!f)return alert("Select a PDF first!");
+  orbTalk("Summarizing...");
+  result.textContent="⏳ Analyzing document...";
+  try{
+    const fd=new FormData();
+    fd.append("file",f);
+    const res=await fetch(`${BACKEND_URL}/summarize`,{method:"POST",body:fd});
+    const data=await res.json();
+    if(data.error){result.textContent="⚠️ "+data.error;return;}
+    lastSummary=data.summary||"No summary generated.";
+    typeWriter(result,lastSummary);
+    saveHistory(f.name,lastSummary);
+  }catch(e){
+    result.textContent="❌ Failed to fetch: "+e.message;
+  }
 }
 
-document.getElementById('summBtn').onclick = async () => {
-  const file = fileInput.files[0];
-  if(!file){ alert("Select a PDF first!"); return; }
+function typeWriter(el,text,i=0){
+  if(i<text.length){el.textContent+=text.charAt(i);setTimeout(()=>typeWriter(el,text,i+1),10);}
+}
 
-  orb.style.animation = "pulse 0.8s infinite alternate";
-  statusDiv.textContent = "🔮 Analyzing document...";
-  resultDiv.textContent = "";
-
-  try {
-    const fd = new FormData();
-    fd.append("file", file);
-    const resp = await fetch(BACKEND_URL + "/summarize", { method: "POST", body: fd });
-    const data = await resp.json();
-    orb.style.animation = "pulse 2s infinite";
-
-    if(data.error) {
-      statusDiv.textContent = "⚠️ Error: " + data.error;
-      return;
-    }
-
-    lastSummary = data.summary || "No summary generated.";
-    animateText(resultDiv, lastSummary);
-    statusDiv.textContent = "✅ Summary ready!";
-
-    saveToHistory(file.name, lastSummary);
-  } catch (err) {
-    orb.style.animation = "pulse 2s infinite";
-    statusDiv.textContent = "❌ Request failed: " + err.message;
-  }
-};
-
-document.getElementById('shortBtn').onclick = () => {
-  if(!lastSummary) return alert("No summary yet!");
-  const short = lastSummary.split('. ').slice(0, 3).join('. ') + '.';
-  animateText(resultDiv, short);
-};
-
-document.getElementById('expandBtn').onclick = () => {
-  if(!lastSummary) return alert("No summary yet!");
-  animateText(resultDiv, lastSummary + " This provides a detailed understanding of the document’s main ideas.");
-};
-
-document.getElementById('speakBtn').onclick = () => {
-  if(!lastSummary) return alert("Nothing to read!");
-  const speech = new SpeechSynthesisUtterance(lastSummary);
-  speech.pitch = 1.1;
-  speech.rate = 1;
-  speech.voice = speechSynthesis.getVoices()[0];
-  speechSynthesis.speak(speech);
-};
-
-document.getElementById('copyBtn').onclick = () => {
-  navigator.clipboard.writeText(resultDiv.textContent);
-  alert("📋 Copied to clipboard!");
-};
-
-document.getElementById('downloadBtn').onclick = () => {
-  const blob = new Blob([resultDiv.textContent], { type: "text/plain" });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = "summary.txt";
-  a.click();
-};
-
-document.getElementById('clearBtn').onclick = () => {
-  resultDiv.textContent = "No summary yet.";
-  statusDiv.textContent = "";
-};
-
-function saveToHistory(name, summary) {
-  const existing = JSON.parse(sessionStorage.getItem("summaryHistory") || "[]");
-  existing.unshift({ name, summary, time: new Date().toLocaleString() });
-  sessionStorage.setItem("summaryHistory", JSON.stringify(existing));
+function shorten(){
+  if(!lastSummary)return alert("No summary yet!");
+  const s=lastSummary.split(". ").slice(0,3).join(". ")+".";
+  result.textContent=s;
+}
+function expand(){
+  if(!lastSummary)return alert("No summary yet!");
+  const e=lastSummary+" It further explores the key ideas in more depth and clarity.";
+  result.textContent=e;
+}
+function rephrase(){
+  if(!lastSummary)return alert("No summary yet!");
+  const s=lastSummary.replace(/\b(utilize|commence|endeavor|obtain)\b/gi,"use");
+  result.textContent=s+" (Simplified)";
+}
+function speak(){
+  if(!lastSummary)return alert("Nothing to read!");
+  const sp=new SpeechSynthesisUtterance(lastSummary);
+  sp.pitch=1;sp.rate=1;sp.volume=1;speechSynthesis.speak(sp);
+}
+function copyText(){
+  navigator.clipboard.writeText(result.textContent);
+  alert("Copied summary!");
+}
+function downloadPDF(){
+  const a=document.createElement("a");
+  const blob=new Blob([`AI PDF Summary\n\n${result.textContent}`],{type:"text/plain"});
+  a.href=URL.createObjectURL(blob);a.download="AI_Summary.txt";a.click();
+}
+function showTip(){
+  const tips=[
+    "💡 Summarize long research papers quickly with this tool!",
+    "💬 You can compare summaries by uploading multiple PDFs.",
+    "🎯 AI Summaries save 90% of your reading time!",
+    "🔉 Try using 'Speak' mode for audio review.",
+    "🧠 Want more insight? Use Expand mode twice!"
+  ];
+  result.textContent=tips[Math.floor(Math.random()*tips.length)];
+  orbTalk("AI Tip shared!");
+}
+function orbTalk(msg){
+  orb.textContent="💬";
+  statusDiv.textContent=msg;
+  setTimeout(()=>{orb.textContent="AI";statusDiv.textContent="";},1500);
+}
+function clearAll(){
+  result.textContent="🪄 Awaiting your magic PDF...";
+  statusDiv.textContent="";
+}
+function saveHistory(name,summary){
+  const h=JSON.parse(localStorage.getItem("summHist")||"[]");
+  h.unshift({name,summary,time:new Date().toLocaleString()});
+  if(h.length>10)h.pop();
+  localStorage.setItem("summHist",JSON.stringify(h));
   renderHistory();
 }
-
-function renderHistory() {
-  const hist = JSON.parse(sessionStorage.getItem("summaryHistory") || "[]");
-  historyList.innerHTML = hist.map(h =>
-    `<div class="history-item"><strong>${h.name}</strong> (${h.time})<br>${h.summary.slice(0, 100)}...</div>`
-  ).join('');
+function renderHistory(){
+  const h=JSON.parse(localStorage.getItem("summHist")||"[]");
+  historyList.innerHTML=h.length?h.map(x=>`<div class='history-item'><b>${x.name}</b><br>${x.summary.slice(0,80)}...<br><em>${x.time}</em></div>`).join(""):"<em>No history yet.</em>";
 }
-
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  if(document.body.classList.contains("light")){
+    document.body.style.background="#f8fafc";
+    document.body.style.color="#111";
+  }else{
+    document.body.style.background="";
+    document.body.style.color="";
+  }
+}
 renderHistory();
 </script>
 </body>
