@@ -3,121 +3,62 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>✨ AI PDF Summarizer Ultimate</title>
+<title>🎤 AI PDF Summarizer Ultimate Voice Edition</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
 body {
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(120deg,#0f172a,#3b0764,#1e3a8a);
-  background-size:300% 300%;
-  animation:bgShift 8s ease infinite;
-  color:#e2e8f0;
-  overflow-x:hidden;
+  margin:0;font-family:'Poppins',sans-serif;
+  background:linear-gradient(120deg,#0f172a,#1e293b,#3b0764);
+  background-size:300% 300%;animation:bgShift 10s ease infinite;
+  color:#e2e8f0;overflow-x:hidden;
 }
 @keyframes bgShift {0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
-
-h1 {
-  text-align:center;
-  font-size:2rem;
-  margin-top:25px;
-  background:linear-gradient(90deg,#06b6d4,#a855f7);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 20px #06b6d4;
-}
-
-.container {
-  max-width:900px;
-  margin:30px auto;
-  padding:25px;
-  background:rgba(255,255,255,0.06);
-  border-radius:20px;
-  box-shadow:0 0 25px rgba(168,85,247,0.3);
-}
-
-.upload-box {
-  border:2px dashed rgba(255,255,255,0.2);
-  padding:40px;
-  border-radius:15px;
-  text-align:center;
-  transition:.3s;
-}
-.upload-box:hover {background:rgba(255,255,255,0.07);transform:scale(1.02);}
+h1{text-align:center;font-size:2rem;margin-top:25px;
+background:linear-gradient(90deg,#06b6d4,#a855f7);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+text-shadow:0 0 20px #06b6d4;}
+.container{max-width:900px;margin:30px auto;padding:25px;
+background:rgba(255,255,255,0.06);border-radius:20px;
+box-shadow:0 0 25px rgba(168,85,247,0.3);}
+.upload-box{border:2px dashed rgba(255,255,255,0.2);padding:40px;
+border-radius:15px;text-align:center;transition:.3s;}
+.upload-box:hover{background:rgba(255,255,255,0.07);transform:scale(1.02);}
 input[type=file]{display:none;}
-
-button {
-  background:linear-gradient(90deg,#7c3aed,#06b6d4);
-  border:none;color:white;
-  font-weight:600;
-  border-radius:8px;
-  padding:10px 18px;
-  margin:6px;
-  cursor:pointer;
-  transition:.3s;
-}
+button{background:linear-gradient(90deg,#7c3aed,#06b6d4);
+border:none;color:white;font-weight:600;border-radius:8px;
+padding:10px 18px;margin:6px;cursor:pointer;transition:.3s;}
 button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
-
-.result {
-  margin-top:20px;
-  padding:15px;
-  border-radius:12px;
-  background:rgba(255,255,255,0.08);
-  white-space:pre-wrap;
-  line-height:1.6;
-  color:#f1f5f9;
-  min-height:150px;
-}
-
-.orb {
-  width:90px;height:90px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,#06b6d4,#a855f7);
-  animation:float 3s ease-in-out infinite;
-  box-shadow:0 0 25px #06b6d4;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:18px;
-  color:white;margin:20px auto;
-}
+.result{margin-top:20px;padding:15px;border-radius:12px;
+background:rgba(255,255,255,0.08);white-space:pre-wrap;
+line-height:1.6;color:#f1f5f9;min-height:150px;}
+.orb{width:90px;height:90px;border-radius:50%;
+background:radial-gradient(circle at 30% 30%,#06b6d4,#a855f7);
+animation:float 3s ease-in-out infinite;box-shadow:0 0 25px #06b6d4;
+display:flex;align-items:center;justify-content:center;
+font-weight:700;font-size:18px;color:white;margin:20px auto;cursor:pointer;}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-
-#progressContainer{
-  width:100%;height:8px;margin-top:10px;border-radius:8px;
-  background:rgba(255,255,255,0.1);
-  overflow:hidden;display:none;
-}
-#progressBar{
-  height:100%;width:0;background:linear-gradient(90deg,#06b6d4,#a855f7);
-  animation:progressGlow 2s linear infinite;
-}
+#progressContainer{width:100%;height:8px;margin-top:10px;
+border-radius:8px;background:rgba(255,255,255,0.1);
+overflow:hidden;display:none;}
+#progressBar{height:100%;width:0;background:linear-gradient(90deg,#06b6d4,#a855f7);
+animation:progressGlow 2s linear infinite;}
 @keyframes progressGlow{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-
-.theme-toggle{
-  position:fixed;top:20px;right:25px;font-size:22px;cursor:pointer;color:#a5f3fc;
-}
-
-.history-drawer{
-  position:fixed;left:-320px;top:0;width:300px;height:100%;
-  background:rgba(30,41,59,0.97);
-  transition:left .4s ease;padding:20px;overflow-y:auto;z-index:10;
-}
-.history-drawer.open{left:0;}
-.history-item{background:rgba(255,255,255,0.07);padding:10px;margin-top:8px;border-radius:8px;}
-
+.theme-toggle{position:fixed;top:20px;right:25px;font-size:22px;cursor:pointer;color:#a5f3fc;}
 .stats{margin-top:15px;text-align:center;font-size:14px;color:#93c5fd;}
+.voice-indicator{color:#facc15;text-align:center;margin-top:8px;font-weight:500;}
 </style>
 </head>
 <body>
 
-<h1>✨ AI PDF Summarizer Ultimate</h1>
+<h1>🎤 AI PDF Summarizer Ultimate</h1>
 <div class="theme-toggle" id="themeToggle">🌙</div>
 
 <div class="container">
   <div class="orb" id="orb">AI</div>
 
   <div class="upload-box" id="uploadBox">
-    📄 Click or drag a PDF file here
+    📄 Click or drag a PDF here
     <input type="file" id="fileInput" accept="application/pdf">
   </div>
 
@@ -133,28 +74,22 @@ button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
     <button id="pdfBtn">Export PDF</button>
     <button id="tipBtn">AI Tip</button>
     <button id="clearBtn">Clear</button>
-    <button id="historyBtn">📜 History</button>
+    <button id="voiceBtn">🎤 Voice Mode</button>
   </div>
 
   <div id="status" style="text-align:center;margin-top:10px;color:#38bdf8;"></div>
-  <div id="result" class="result">🪄 Ready to summarize your PDF...</div>
+  <div id="voiceIndicator" class="voice-indicator"></div>
+  <div id="result" class="result">🪄 Waiting for your command...</div>
   <div id="stats" class="stats"></div>
 </div>
-
-<div class="history-drawer" id="historyDrawer"><h3>📜 Summary History</h3><div id="historyList"></div></div>
 
 <script>
 const BACKEND_URL="https://ai-backend-4-78b9.onrender.com";
 let lastSummary="";
-const orb=document.getElementById("orb"),
-fileInput=document.getElementById("fileInput"),
-result=document.getElementById("result"),
+const orb=document.getElementById("orb"),fileInput=document.getElementById("fileInput"),
+result=document.getElementById("result"),statusDiv=document.getElementById("status"),
 progressContainer=document.getElementById("progressContainer"),
-progressBar=document.getElementById("progressBar"),
-statusDiv=document.getElementById("status"),
-statsDiv=document.getElementById("stats"),
-historyDrawer=document.getElementById("historyDrawer"),
-historyList=document.getElementById("historyList");
+progressBar=document.getElementById("progressBar"),voiceIndicator=document.getElementById("voiceIndicator");
 
 document.getElementById("uploadBox").onclick=()=>fileInput.click();
 document.getElementById("summBtn").onclick=()=>summarize();
@@ -167,102 +102,74 @@ document.getElementById("pdfBtn").onclick=()=>exportPDF();
 document.getElementById("tipBtn").onclick=()=>showTip();
 document.getElementById("clearBtn").onclick=()=>clearAll();
 document.getElementById("themeToggle").onclick=()=>toggleTheme();
-document.getElementById("historyBtn").onclick=()=>historyDrawer.classList.toggle("open");
+document.getElementById("voiceBtn").onclick=()=>startVoiceMode();
 
 async function summarize(){
   const f=fileInput.files[0];
-  if(!f)return alert("Please upload a PDF!");
+  if(!f)return alert("Select a PDF first!");
   orbTalk("Summarizing...");
   startProgress();
-  result.textContent="⏳ Reading and summarizing...";
+  result.textContent="⏳ Summarizing document...";
   try{
-    const fd=new FormData();fd.append("file",f);
+    const fd=new FormData();
+    fd.append("file",f);
     const res=await fetch(`${BACKEND_URL}/summarize`,{method:"POST",body:fd});
     const data=await res.json();
     stopProgress();
     if(data.error)return result.textContent="⚠️ "+data.error;
     lastSummary=data.summary||"No summary generated.";
     typeWriter(result,lastSummary);
-    updateStats(lastSummary);
-    saveHistory(f.name,lastSummary);
   }catch(e){stopProgress();result.textContent="❌ Failed: "+e.message;}
 }
 
-function shorten(){
-  if(!lastSummary)return alert("No summary yet!");
-  const short=lastSummary.split(". ").slice(0,3).join(". ")+".";
-  result.textContent=short;
-  updateStats(short);
+function shorten(){if(!lastSummary)return alert("No summary yet!");
+result.textContent=lastSummary.split(". ").slice(0,3).join(". ")+".";
 }
-function expand(){
-  if(!lastSummary)return alert("No summary yet!");
-  const exp=lastSummary+" Additionally, it elaborates on related insights for clarity.";
-  result.textContent=exp;updateStats(exp);
+function expand(){if(!lastSummary)return alert("No summary yet!");
+result.textContent=lastSummary+" Additionally, it elaborates for clarity.";
 }
-function rephrase(){
-  if(!lastSummary)return alert("No summary yet!");
-  const re=lastSummary.replace(/\b(important|difficult|study|paper)\b/gi,"key").replace(/\b(analyze)\b/gi,"examine");
-  result.textContent=re+" (Simplified)";updateStats(re);
+function rephrase(){if(!lastSummary)return alert("No summary yet!");
+result.textContent=lastSummary.replace(/\b(important|difficult)\b/gi,"key")+" (Simplified)";
 }
-function speak(){
-  if(!lastSummary)return alert("Nothing to speak!");
-  const sp=new SpeechSynthesisUtterance(result.textContent);
-  sp.pitch=1.05;sp.rate=1;sp.volume=1;
-  speechSynthesis.speak(sp);
-}
-function copyText(){
-  navigator.clipboard.writeText(result.textContent);
-  alert("📋 Copied summary!");
-}
-function exportPDF(){
-  const text=`AI Summary\n\n${result.textContent}\n\nGenerated: ${new Date().toLocaleString()}`;
-  const blob=new Blob([text],{type:"application/pdf"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);a.download="AI_Summary.pdf";a.click();
-}
-function showTip(){
-  const tips=[
-    "💡 Use AI summaries for faster exam prep!",
-    "🎯 Try Shorten + Expand together for layered insight.",
-    "🎨 Use light theme for printouts.",
-    "🧠 You can save up to 90% time reading PDFs!",
-    "🔉 Try Speak mode for quick audio revision."
-  ];
-  result.textContent=tips[Math.floor(Math.random()*tips.length)];
-}
-function clearAll(){result.textContent="🪄 Ready to summarize your PDF...";statsDiv.textContent="";}
+function speak(){if(!lastSummary)return alert("Nothing to read!");
+const sp=new SpeechSynthesisUtterance(result.textContent);speechSynthesis.speak(sp);}
+function copyText(){navigator.clipboard.writeText(result.textContent);alert("Copied!");}
+function exportPDF(){const blob=new Blob([result.textContent],{type:"text/plain"});
+const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="AI_Summary.txt";a.click();}
+function showTip(){const tips=[
+"💡 Use AI to save time before exams!","🎧 Speak summaries aloud while studying.",
+"🧠 Use Rephrase for easier language!","🎨 Try light mode for printing.",
+"✨ Combine Shorten + Expand for layers!"
+];result.textContent=tips[Math.floor(Math.random()*tips.length)];}
+function clearAll(){result.textContent="🪄 Waiting for your command...";statusDiv.textContent="";}
 function typeWriter(el,text,i=0){el.textContent="";if(i<text.length){el.textContent+=text.charAt(i);setTimeout(()=>typeWriter(el,text,i+1),8);}else el.textContent=text;}
-function startProgress(){progressContainer.style.display="block";let w=0;progressBar.style.width="0%";const i=setInterval(()=>{w+=3;if(w>95)clearInterval(i);progressBar.style.width=w+"%";},150);}
+function startProgress(){progressContainer.style.display="block";let w=0;const i=setInterval(()=>{w+=4;if(w>95)clearInterval(i);progressBar.style.width=w+"%";},200);}
 function stopProgress(){progressBar.style.width="100%";setTimeout(()=>progressContainer.style.display="none",800);}
-function updateStats(t){const words=t.split(/\s+/).length;const time=(words/180).toFixed(1);statsDiv.textContent=`📊 ${words} words · ⏱️ ${time} min read`;}
+function toggleTheme(){document.body.classList.toggle("light");
+if(document.body.classList.contains("light")){document.body.style.background="#f8fafc";document.body.style.color="#111";}
+else{document.body.style.background="";document.body.style.color="";}}
+function orbTalk(msg){orb.textContent="💬";statusDiv.textContent=msg;setTimeout(()=>{orb.textContent="AI";statusDiv.textContent="";},1500);}
 
-/* 🕒 HISTORY */
-function saveHistory(name,summary){
-  const h=JSON.parse(localStorage.getItem("hist")||"[]");
-  h.unshift({name,summary,time:new Date().toLocaleTimeString()});
-  if(h.length>8)h.pop();
-  localStorage.setItem("hist",JSON.stringify(h));
-  renderHistory();
-}
-function renderHistory(){
-  const h=JSON.parse(localStorage.getItem("hist")||"[]");
-  historyList.innerHTML=h.length?h.map(x=>`<div class='history-item'><b>${x.name}</b><br>${x.summary.slice(0,80)}...<br><em>${x.time}</em></div>`).join(""):"<em>No history yet.</em>";
-}
-renderHistory();
-
-/* 🌗 Theme */
-function toggleTheme(){
-  document.body.classList.toggle("light");
-  if(document.body.classList.contains("light")){
-    document.body.style.background="#f9fafb";document.body.style.color="#111";
-  }else{document.body.style.background="";document.body.style.color="";}
-}
-
-/* 💬 Orb AI Chat */
-function orbTalk(msg){
-  orb.textContent="💬";
-  statusDiv.textContent=msg;
-  setTimeout(()=>{orb.textContent="AI";statusDiv.textContent="";},1800);
+/* 🎤 Voice Command Mode */
+function startVoiceMode(){
+  if(!('webkitSpeechRecognition' in window))return alert("Voice recognition not supported!");
+  const recognition=new webkitSpeechRecognition();
+  recognition.lang="en-US";recognition.interimResults=false;recognition.maxAlternatives=1;
+  recognition.start();
+  orbTalk("Listening...");
+  voiceIndicator.textContent="🎧 Listening... Speak now";
+  recognition.onresult=function(e){
+    const cmd=e.results[0][0].transcript.toLowerCase();
+    voiceIndicator.textContent="🗣️ Heard: "+cmd;
+    if(cmd.includes("summarize"))summarize();
+    else if(cmd.includes("shorten"))shorten();
+    else if(cmd.includes("expand"))expand();
+    else if(cmd.includes("rephrase"))rephrase();
+    else if(cmd.includes("read")||cmd.includes("speak"))speak();
+    else if(cmd.includes("clear"))clearAll();
+    else result.textContent="🤔 Unknown command: "+cmd;
+  };
+  recognition.onend=()=>{voiceIndicator.textContent="🎤 Voice mode ended.";}
 }
 </script>
 </body>
