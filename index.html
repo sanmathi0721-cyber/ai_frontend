@@ -109,29 +109,6 @@ button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
   font-size:22px;
   color:#a5f3fc;
 }
-
-/* 🌟 Progress Bar Styles */
-.progress-container {
-  width:100%;
-  height:8px;
-  background:rgba(255,255,255,0.1);
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:15px;
-  display:none;
-}
-.progress-bar {
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,#06b6d4,#a855f7,#06b6d4);
-  background-size:200% 100%;
-  animation:progressGlow 2s linear infinite;
-  transition:width 0.4s ease;
-}
-@keyframes progressGlow {
-  0%{background-position:0% 50%;}
-  100%{background-position:200% 50%;}
-}
 </style>
 </head>
 <body>
@@ -144,10 +121,6 @@ button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
   <div class="upload-box" id="uploadBox">
     📄 Click or drag a PDF here
     <input type="file" id="fileInput" accept="application/pdf">
-  </div>
-
-  <div class="progress-container" id="progressContainer">
-    <div class="progress-bar" id="progressBar"></div>
   </div>
 
   <div style="text-align:center;margin-top:15px;">
@@ -171,13 +144,9 @@ button:hover{transform:scale(1.05);box-shadow:0 0 10px #06b6d4;}
 <script>
 const BACKEND_URL="https://ai-backend-4-78b9.onrender.com";
 let lastSummary="";
-const orb=document.getElementById("orb"),
-fileInput=document.getElementById("fileInput"),
-result=document.getElementById("result"),
-statusDiv=document.getElementById("status"),
-historyList=document.getElementById("historyList"),
-progressContainer=document.getElementById("progressContainer"),
-progressBar=document.getElementById("progressBar");
+const orb=document.getElementById("orb"),fileInput=document.getElementById("fileInput"),
+result=document.getElementById("result"),statusDiv=document.getElementById("status"),
+historyList=document.getElementById("historyList");
 
 document.getElementById("uploadBox").onclick=()=>fileInput.click();
 document.getElementById("summBtn").onclick=()=>summarize();
@@ -196,46 +165,24 @@ async function summarize(){
   if(!f)return alert("Select a PDF first!");
   orbTalk("Summarizing...");
   result.textContent="⏳ Analyzing document...";
-  startProgress();
   try{
     const fd=new FormData();
     fd.append("file",f);
     const res=await fetch(`${BACKEND_URL}/summarize`,{method:"POST",body:fd});
     const data=await res.json();
-    stopProgress();
     if(data.error){result.textContent="⚠️ "+data.error;return;}
     lastSummary=data.summary||"No summary generated.";
     typeWriter(result,lastSummary);
     saveHistory(f.name,lastSummary);
   }catch(e){
-    stopProgress();
     result.textContent="❌ Failed to fetch: "+e.message;
   }
 }
 
-/* 🌈 Progress Bar Logic */
-let progressInterval;
-function startProgress(){
-  progressContainer.style.display="block";
-  progressBar.style.width="0%";
-  let width=0;
-  progressInterval=setInterval(()=>{
-    width+=5;
-    if(width>95)width=95;
-    progressBar.style.width=width+"%";
-  },200);
-}
-function stopProgress(){
-  clearInterval(progressInterval);
-  progressBar.style.width="100%";
-  setTimeout(()=>progressContainer.style.display="none",800);
+function typeWriter(el,text,i=0){
+  if(i<text.length){el.textContent+=text.charAt(i);setTimeout(()=>typeWriter(el,text,i+1),10);}
 }
 
-function typeWriter(el,text,i=0){
-  el.textContent="";
-  if(i<text.length){el.textContent+=text.charAt(i);setTimeout(()=>typeWriter(el,text,i+1),10);}
-  else el.textContent=text;
-}
 function shorten(){
   if(!lastSummary)return alert("No summary yet!");
   const s=lastSummary.split(". ").slice(0,3).join(". ")+".";
@@ -243,35 +190,35 @@ function shorten(){
 }
 function expand(){
   if(!lastSummary)return alert("No summary yet!");
-  result.textContent=lastSummary+" It elaborates on these points for deeper understanding.";
+  const e=lastSummary+" It further explores the key ideas in more depth and clarity.";
+  result.textContent=e;
 }
 function rephrase(){
   if(!lastSummary)return alert("No summary yet!");
-  result.textContent=lastSummary.replace(/important/gi,"crucial").replace(/difficult/gi,"challenging")+" (Simplified)";
+  const s=lastSummary.replace(/\b(utilize|commence|endeavor|obtain)\b/gi,"use");
+  result.textContent=s+" (Simplified)";
 }
 function speak(){
   if(!lastSummary)return alert("Nothing to read!");
   const sp=new SpeechSynthesisUtterance(lastSummary);
-  sp.pitch=1;sp.rate=1;speechSynthesis.speak(sp);
+  sp.pitch=1;sp.rate=1;sp.volume=1;speechSynthesis.speak(sp);
 }
 function copyText(){
   navigator.clipboard.writeText(result.textContent);
   alert("Copied summary!");
 }
 function downloadPDF(){
-  const blob=new Blob([result.textContent],{type:"text/plain"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="AI_Summary.txt";
-  a.click();
+  const blob=new Blob([`AI PDF Summary\n\n${result.textContent}`],{type:"text/plain"});
+  a.href=URL.createObjectURL(blob);a.download="AI_Summary.txt";a.click();
 }
 function showTip(){
   const tips=[
-    "💡 Use AI summaries to revise before exams!",
-    "📚 Shorten mode gives the top 3 insights fast.",
-    "🎨 Try switching to light mode during presentations!",
-    "🎧 Use Speak mode to listen while you read!",
-    "✨ Each summary is unique — compare two PDFs!"
+    "💡 Summarize long research papers quickly with this tool!",
+    "💬 You can compare summaries by uploading multiple PDFs.",
+    "🎯 AI Summaries save 90% of your reading time!",
+    "🔉 Try using 'Speak' mode for audio review.",
+    "🧠 Want more insight? Use Expand mode twice!"
   ];
   result.textContent=tips[Math.floor(Math.random()*tips.length)];
   orbTalk("AI Tip shared!");
